@@ -1,5 +1,8 @@
 " Plugins
+" I EDITED THIS
 call plug#begin('~/.vim/plugged')
+    " Tmux
+    Plug 'christoomey/vim-tmux-navigator'
     " File
     Plug 'airblade/vim-gitgutter'
     Plug 'tpope/vim-fugitive'
@@ -8,6 +11,7 @@ call plug#begin('~/.vim/plugged')
     " Theme
     Plug 'morhetz/gruvbox'
     Plug 'lifepillar/vim-solarized8'
+    Plug 'junegunn/goyo.vim'
     " Lang
     Plug 'JuliaEditorSupport/julia-vim', { 'on_ft': 'julia' }
     Plug 'sbdchd/neoformat'
@@ -15,13 +19,12 @@ call plug#begin('~/.vim/plugged')
     Plug 'sirver/ultisnips'
     Plug 'honza/vim-snippets'
 call plug#end()
+
 filetype plugin indent on
 " Neovim Setting
 " Basic settings
 set number lazyredraw mouse=a so=5
 " Movements
-vmap < <gv
-vmap > >gv
 map <esc> :noh<cr>
 nnoremap ; :
 " Python setup
@@ -49,7 +52,6 @@ set tabstop=4 shiftwidth=4 expandtab
 set virtualedit=
 set wildmenu
 "set colorcolumn=100
-set nowrap linebreak
 set wildmode=full
 set notimeout
 " leader is ,
@@ -66,13 +68,9 @@ vnoremap <A-k> :m '<-2<CR>gv=gv
 " Gotta run fast!
 noremap H ^
 noremap L g_
-noremap J 5j
-noremap K 5k
-" {} is not useful anyway, ƪ(•̃͡ε•̃͡)∫ ƪ(•̃͡ε•̃͡)∫ ƪ(•̃͡ε•̃͡)∫
-nnoremap { J
-nnoremap } K
 " History
 set undofile undodir=~/.vim/undo/ undolevels=1000 undoreload=10000
+set backupdir=~/.vim/bkup
 " FZF
 nnoremap <leader>b :Buffers<CR>
 command! -bang -nargs=* GGrep
@@ -160,13 +158,11 @@ autocmd BufNewFile,BufRead *.mmark set filetype=markdown
 autocmd BufNewFile,BufRead *.jmd set filetype=markdown
 autocmd BufNewFile,BufRead *.jl nnoremap <leader>B :let @+ = 'breakpoint(' . join(['"' . expand('%:p') . '"',  line(".")], ',') . ')' <CR>
 autocmd BufNewFile,BufRead *.tex,*.bib setlocal ts=2 sw=2
-autocmd FileType gitcommit,markdown,text,html,tex setlocal spell complete+=kspell tw=80
+"autocmd FileType gitcommit,markdown,text,html,tex setlocal spell complete+=kspell tw=80
 "set colorcolumn=80 " and give me a colored column
 " Julia
 let g:default_julia_version = "devel"
 autocmd BufRead,BufNewFile $HOME/.julia/*/*DiffEq*/* setlocal ts=2 sw=2
-autocmd BufRead,BufNewFile $HOME/.julia/*/PuMaS/* setlocal ts=2 sw=2
-autocmd BufRead,BufNewFile $HOME/.julia/*/DiffEqGPU/* setlocal ts=4 sw=4
 " LaTeX
 let g:tex_flavor='latex'
 let g:vimtex_view_method='zathura'
@@ -222,3 +218,19 @@ let g:solarized_diffmode = "high"
 let g:solarized_termtrans = 1
 colorscheme solarized8
 set laststatus=0
+
+" Timestamp notes
+map <F8> :put =strftime('%a %Y-%m-%d %H:%M ')<CR>j
+let yingbo = "Co-authored-by: \"Yingbo Ma\" <mayingbo5@gmail.com>"
+map <F9> exe "normal! a" . yingbo . "\<Esc>"
+
+autocmd BufNewFile,BufRead *.jmd call PresentationMode()
+function PresentationMode()
+    nnoremap <buffer> <Right> :n<CR>
+    nnoremap <buffer> <Left> :N<CR>
+    if !exists('#goyo') "if not already in Goyo
+        Goyo
+    end
+endfunction
+
+runtime macros/matchit.vim
